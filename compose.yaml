@@ -1,0 +1,13 @@
+services:
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    ports:
+      - "8080:80"
+    container_name: backend
+    secrets:
+      - db_password
+      
+secrets:
+  db_password:
+    file: ./atlas-credentials.env
