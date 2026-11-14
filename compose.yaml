@@ -10,4 +10,4 @@ services:
       
 secrets:
   db_password:
-    file: ./atlas-credentials.env
+    file: ./database_url.txt
