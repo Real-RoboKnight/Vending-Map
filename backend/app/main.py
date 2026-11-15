@@ -1,12 +1,28 @@
-from pymongo.operations import SearchIndexModel
+import base64
 from typing import Annotated
 
 from bson import ObjectId
-from fastapi import FastAPI
+from fastapi import FastAPI, UploadFile
+from fastapi.middleware.cors import CORSMiddleware
+from google import genai
 from pydantic import BaseModel, BeforeValidator, ConfigDict, Field
 from pymongo import AsyncMongoClient, ReturnDocument
 
 app = FastAPI()
+
+origins = [
+    "http://45.63.89.239",
+    "https://snackscout.club",  # Production domain
+]
+
+# 2. Add the middleware to your FastAPI instance
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,  # Allow specific domains
+    allow_credentials=True,  # Support cookies and auth headers
+    allow_methods=["*"],  # Allow all standard HTTP methods (GET, POST, etc.)
+    allow_headers=["*"],  # Allow all standard request headers
+)
 
 db_uri = None
 with open("/run/secrets/db_password", "r") as f:
@@ -15,6 +31,11 @@ with open("/run/secrets/db_password", "r") as f:
 db = AsyncMongoClient(db_uri).database
 locations_collection = db.get_collection("locations")
 PyObjectId = Annotated[str, BeforeValidator(str)]
+
+gemini_key = None
+with open("/run/secrets/gemini", "r") as f:
+    gemini_key = f.read().strip()
+gemini = genai.Client(api_key=gemini_key)
 
 
 @app.get("/")
@@ -145,3 +166,20 @@ async def autocomplete_search(query: str) -> list[str]:
                         return sorted(items)
 
     return items
+
+
+# Gemini integration
+
+@app.post("/analyse/image/")
+async def analyse_image(image: UploadFile) -> list[str]:
+    """Analyse an image and return a list of items that are detected in the image.""" 
+    b64_image = base64.b64encode(await image.read()).decode("utf-8")  # Convert the image to base64 string
+    # Placeholder for the actual image analysis logic
+    gemini_response = gemini.interactions.create(
+        model="gemini-1.5",
+        prompt=f"Analyse the following image and return a list of items detected in it: {b64_image}",
+        max_output_tokens=100,
+    )
+    return ["item1", "item2", "item3"]
+
+# Search
