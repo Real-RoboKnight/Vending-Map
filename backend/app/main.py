@@ -8,7 +8,7 @@ from google import genai
 from pydantic import BaseModel, BeforeValidator, ConfigDict, Field
 from pymongo import AsyncMongoClient, ReturnDocument
 
-app = FastAPI()
+app = FastAPI(debug=True)
 
 origins = [
     "http://45.63.89.239",
@@ -49,7 +49,7 @@ class item(BaseModel):
     price: float = Field(default=0.0, ge=0.0)
 
 class machine_location(BaseModel):
-    id: PyObjectId | None = Field(alias="_id", default=None)
+    id: PyObjectId | None = Field(alias="id", default=None)
     name: str | None = Field(default=None)
     longitude: float = Field(default=0.0, ge=-180.0, le=180.0)
     latitude: float = Field(default=0.0, ge=-90.0, le=90.0)
@@ -210,12 +210,14 @@ async def analyse_image(image: UploadFile) -> list[str]:
 
     b64_image = base64.b64encode(await b64_image).decode("utf-8")  # Convert the image to base64 string
     
-    # Placeholder for the actual image analysis logic
     gemini_response = gemini.interactions.create(
-        model="gemini-1.5",
-        prompt=f"Analyse the following image and return a list of items detected in it: {b64_image}",
-        max_output_tokens=100,
-        schema=schema,
+        model="gemini-3.5-flash",
+        input=f"Analyse the following image and return a list of items detected in it: {b64_image}",
+        response_format={
+            "type": "text",
+            "mime_type": "application/json",
+            "schema": schema,
+        },
     )
     output = gemini_response.output_text # type: ignore
     return [output if output else "No items detected"]
