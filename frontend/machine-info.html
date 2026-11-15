@@ -159,7 +159,7 @@
 
         let query_params = new URL(window.location.toString()).searchParams;
 
-        machine_id = query_params.get("machine_id");
+        let machine_id = query_params.get("machine_id");
 
         if (machine_id) {
             let data = await JSON.parse(await fetch("/"));
