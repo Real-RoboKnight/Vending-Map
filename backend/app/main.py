@@ -49,7 +49,7 @@ class item(BaseModel):
     price: float = Field(default=0.0, ge=0.0)
 
 class machine_location(BaseModel):
-    id: PyObjectId | None = Field(alias="id", default=None)
+    id: PyObjectId | None = Field(alias="_id", default=None)
     name: str | None = Field(default=None)
     longitude: float = Field(default=0.0, ge=-180.0, le=180.0)
     latitude: float = Field(default=0.0, ge=-90.0, le=90.0)
@@ -63,7 +63,7 @@ class machine_location(BaseModel):
         arbitrary_types_allowed=True,
         json_schema_extra={
             "example": {
-                "id": "6af8ec36812ac87c4f04e0ec",
+                "_id": "6af8ec36812ac87c4f04e0ec",
                 "name": "Example Location",
                 "longitude": -111.9194,
                 "latitude": 33.4749,
@@ -98,7 +98,7 @@ async def get_locations(
 @app.get("/locations/{id}")
 async def get_location(id: str) -> machine_location:
     """Get a location by its ID."""
-    location = await locations_collection.find_one({"id": ObjectId(id)})
+    location = await locations_collection.find_one({"_id": ObjectId(id)})
     if location is None:
         raise HTTPException(status_code=404, detail="Location not found")
     return machine_location.model_validate(location)
@@ -125,7 +125,7 @@ async def update_location(location: machine_location) -> bool:
 
     updated_location = location.model_dump(by_alias=True, exclude={"id"})
     result = await locations_collection.find_one_and_update(
-        {"id": ObjectId(location.id)},
+        {"_id": ObjectId(location.id)},
         {"$set": updated_location},
         return_document=ReturnDocument.AFTER,
     )
@@ -154,11 +154,11 @@ async def autocomplete_search(query: str) -> list[str]:
                 }
             },
             {"$unwind": "$items"},
-            {"$group": {"id": "$items.name"}},
-            {"$sort": {"id": 1}},
+            {"$group": {"_id": "$items.name"}},
+            {"$sort": {"_id": 1}},
             {"$limit": 5},
         ]):
-            items.append(item["id"])
+            items.append(item["_id"])
     except Exception:
         # Atlas Search is optional while the search index is being configured.
         pass
