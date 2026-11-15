@@ -13,13 +13,14 @@ app = FastAPI()
 origins = [
     "http://45.63.89.239",
     "http://45.63.89.239:8080",
-    "https://snackscout.club",  # Production domain
+    "http://snackscout.club",  # Production domain
 ]
 
 # 2. Add the middleware to your FastAPI instance
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,  # Allow specific domains
+    allow_origin_regex=r"^https?://(localhost|127\.0\.0\.1)(:\d+)?$",
     allow_credentials=True,  # Support cookies and auth headers
     allow_methods=["*"],  # Allow all standard HTTP methods (GET, POST, etc.)
     allow_headers=["*"],  # Allow all standard request headers

@@ -1,6 +1,10 @@
 # Use the official lightweight Python image
 FROM python:3.12-slim
 
+RUN apt-get update \
+	&& apt-get install -y --no-install-recommends ca-certificates \
+	&& rm -rf /var/lib/apt/lists/*
+
 # Set the working directory inside the container
 WORKDIR /code
 
