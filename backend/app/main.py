@@ -2,7 +2,7 @@ import base64
 from typing import Annotated
 
 from bson import ObjectId
-from fastapi import FastAPI, UploadFile
+from fastapi import FastAPI, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from google import genai
 from pydantic import BaseModel, BeforeValidator, ConfigDict, Field
@@ -95,6 +95,14 @@ async def get_locations(
         locations.append(machine_location.model_validate(location))
     return locations
 
+@app.get("/locations/{id}")
+async def get_location(id: str) -> machine_location:
+    """Get a location by its ID."""
+    location = await locations_collection.find_one({"_id": ObjectId(id)})
+    if location is None:
+        raise HTTPException(status_code=404, detail="Location not found")
+    return machine_location.model_validate(location)
+
 @app.post("/locations/")
 async def create_location(location: machine_location) -> str:
     """Create a NEW location in the database. Will return the ID of the new location if the location was created successfully, empty string otherwise.
@@ -185,6 +193,21 @@ async def analyse_image(image: UploadFile) -> list[str]:
             if name not in items_in_db:
                 items_in_db.append(name)
 
+    # Create a model schema that only lets the model return items that are in our database
+    schema = {
+        "type": "object",
+        "properties": {
+            "items": {
+                "type": "array",
+                "items": {
+                    "type": "string",
+                    "enum": items_in_db,
+                },
+            },
+        },
+        "required": ["items"],
+    }
+
     b64_image = base64.b64encode(await b64_image).decode("utf-8")  # Convert the image to base64 string
     
     # Placeholder for the actual image analysis logic
@@ -192,7 +215,9 @@ async def analyse_image(image: UploadFile) -> list[str]:
         model="gemini-1.5",
         prompt=f"Analyse the following image and return a list of items detected in it: {b64_image}",
         max_output_tokens=100,
+        schema=schema,
     )
-    return ["item1", "item2", "item3"]
+    output = gemini_response.output_text # type: ignore
+    return [output if output else "No items detected"]
 
 # Search
