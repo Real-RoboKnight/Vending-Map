@@ -317,13 +317,13 @@
         document.getElementById("add-new-items-button").addEventListener("click", addItemRow);
 
         async function submitChanges() {
-            let machineID = Number(document.getElementByID("_id").value);
-            let name = document.getElementByID("name").value;
-            let latitude = document.getElementByID("latitude").value;
-            let longitude = document.getElementByID("longitude").value;
-            let cash = document.getElementByID("cash").value;
-            let tap = document.getElementByID("tap").value;
-            let mAndg = document.getElementByID("mandg").value;
+            let machineID = Number(document.getElementById("_id").value);
+            let name = document.getElementById("name").value;
+            let latitude = document.getElementById("latitude").value;
+            let longitude = document.getElementById("longitude").value;
+            let cash = document.getElementById("cash").value;
+            let tap = document.getElementById("tap").value;
+            let mAndg = document.getElementById("mandg").value;
 
             let items = {}
             for (let i = 0; i < numItems; i++) {
