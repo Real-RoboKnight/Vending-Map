@@ -12,6 +12,7 @@ app = FastAPI()
 
 origins = [
     "http://45.63.89.239",
+    "http://45.63.89.239:8080",
     "https://snackscout.club",  # Production domain
 ]
 
@@ -173,7 +174,9 @@ async def autocomplete_search(query: str) -> list[str]:
 @app.post("/analyse/image/")
 async def analyse_image(image: UploadFile) -> list[str]:
     """Analyse an image and return a list of items that are detected in the image.""" 
+    b64_image = image.read()
     b64_image = base64.b64encode(await image.read()).decode("utf-8")  # Convert the image to base64 string
+    
     # Placeholder for the actual image analysis logic
     gemini_response = gemini.interactions.create(
         model="gemini-1.5",
