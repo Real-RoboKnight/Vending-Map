@@ -1,3 +1,4 @@
+import json
 import io
 import base64
 from typing import Annotated
@@ -210,7 +211,7 @@ async def analyse_image(image: UploadFile) -> list[str]:
     }
 
     def minify_image_bytes(
-        image_bytes: bytes, quality: int = 50, output_format: str = "WEBP"
+        image_bytes: bytes, quality: int = 50, output_format: str = "JPEG"
         ) -> bytes:
         # Load the raw bytes into a file-like stream
         input_stream = io.BytesIO(image_bytes)
@@ -232,14 +233,22 @@ async def analyse_image(image: UploadFile) -> list[str]:
     
     gemini_response = gemini.interactions.create(
         model="gemini-3.5-flash",
-        input=f"Analyse the following image and return a list of items detected in it: {b64_image}",
+        input=
+        [{"type": "text", "text": f"Analyse the following image and return a list of items detected in it. Return all the items in a JSON array under the key 'items'. Only return items that are in the following list: {items_in_db}."},
+         {"type": "image", "data": b64_image, "mime_type": "image/jpeg"}],
         response_format={
             "type": "text",
             "mime_type": "application/json",
             "schema": schema,
         },
     )
-    output = gemini_response.output_text # type: ignore
-    return [output if output else "No items detected"]
+    output: str = gemini_response.output_text # type: ignore
+
+    try:
+        output = json.loads(output).get("items", [])
+    except json.JSONDecodeError as e:
+        raise HTTPException(status_code=500, detail="Parsing JSON Error") from e
+
+    return [item for item in output if item in items_in_db]
 
 # Search
