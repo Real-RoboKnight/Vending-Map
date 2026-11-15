@@ -1,3 +1,4 @@
+from pymongo.operations import SearchIndexModel
 from typing import Annotated
 
 from bson import ObjectId
@@ -13,8 +14,8 @@ with open("/run/secrets/db_password", "r") as f:
 
 db = AsyncMongoClient(db_uri).database
 locations_collection = db.get_collection("locations")
-items_collection = db.get_collection("items")
 PyObjectId = Annotated[str, BeforeValidator(str)]
+
 
 @app.get("/")
 def read_root():
@@ -31,7 +32,7 @@ class machine_location(BaseModel):
     latitude: float = Field(default=0.0, ge=-90.0, le=90.0)
     cash: bool | None = Field(default=None)
     tap: bool | None = Field(default=None)
-    other_payment_methods: list[str] = Field(default=[])
+    mng: bool | None = Field(default=None)
     items: list[item] = Field(default=[])
     
     model_config = ConfigDict(
@@ -45,10 +46,10 @@ class machine_location(BaseModel):
                 "latitude": 37.7749,
                 "cash": True,
                 "tap": False,
-                "other_payment_methods": ["M&G"],
+                "mng": False,
                 "items": [
                     {
-                        "name_id": "Cheetos Crunchy Flamin' Hot 1.75oz",
+                        "name": "Cheetos Crunchy Flamin' Hot 1.75oz",
                         "price": 1.99,
                     }
                 ],
@@ -104,26 +105,43 @@ async def update_location(location: machine_location) -> bool:
 async def autocomplete_search(query: str) -> list[str]:
     """Search for items by name. Will return a list of items can be autocompleted."""
     items = []
-    async for item in await locations_collection.aggregate([
-        {
-            "$search": {
-                "index": "default",
-                "autocomplete": {
-                    "path": "items.name",
-                    "query": query,
-                    "tokenOrder": "any",
-                    "fuzzy": {
-                        "maxEdits": 2,
-                        "prefixLength": 1,
-                        "maxExpansions": 256,
+    try:
+        async for item in await locations_collection.aggregate([
+            {
+                "$search": {
+                    "index": "default",
+                    "autocomplete": {
+                        "path": "items.name",
+                        "query": query,
+                        "tokenOrder": "any",
+                        "fuzzy": {
+                            "maxEdits": 2,
+                            "prefixLength": 1,
+                            "maxExpansions": 256,
+                        },
                     },
-                },
-            }
-        },
-        {"$unwind": "$items"},
-        {"$group": {"_id": "$items.name"}},
-        {"$sort": {"_id": 1}},
-        {"$limit": 5},
-    ]):
-        items.append(item["_id"])
+                }
+            },
+            {"$unwind": "$items"},
+            {"$group": {"_id": "$items.name"}},
+            {"$sort": {"_id": 1}},
+            {"$limit": 5},
+        ]):
+            items.append(item["_id"])
+    except Exception:
+        # Atlas Search is optional while the search index is being configured.
+        pass
+
+    if not items:
+        async for location in locations_collection.find(
+            {"items.name": {"$regex": query, "$options": "i"}},
+            {"items.name": 1},
+        ):
+            for location_item in location.get("items", []):
+                name = location_item.get("name", "")
+                if query.lower() in name.lower() and name not in items:
+                    items.append(name)
+                    if len(items) == 5:
+                        return sorted(items)
+
     return items
