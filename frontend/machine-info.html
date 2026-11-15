@@ -321,9 +321,9 @@
             let name = document.getElementById("name").value;
             let latitude = document.getElementById("latitude").value;
             let longitude = document.getElementById("longitude").value;
-            let cash = document.getElementById("cash").value;
-            let tap = document.getElementById("tap").value;
-            let mAndg = document.getElementById("mandg").value;
+            let cash = Boolean(document.getElementById("cash").value);
+            let tap = Boolean(document.getElementById("tap").value);
+            let mAndg = Boolean(document.getElementById("mandg").value);
 
             let items = []
             for (let i = 0; i < numItems; i++) {
