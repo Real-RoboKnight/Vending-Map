@@ -12,14 +12,36 @@ const startButton = document.getElementById("start-button");
 const allowButton = document.getElementById("permissions-button");
 const uploadButton = document.getElementById("upload-img-button");
 uploadButton.addEventListener("click", async () => {
-  console.log(photo.src);
-  let fd = new FormData();
-  fd.append("image", photo.src);
-  await fetch("http://45.63.89.239:8080/analyse/image", {
-    headers: new Headers({ "content-type": "multipart/form-data" }),
-    body: fd
-  });
-})
+  if (!photo.src || photo.src === window.location.href) {
+    alert("Capture a photo before uploading it.");
+    return;
+  }
+
+  uploadButton.disabled = true;
+  try {
+    const response = await fetch(photo.src);
+    const imageBlob = await response.blob();
+    const formData = new FormData();
+    formData.append("image", imageBlob, "vending-machine.png");
+
+    const analysisResponse = await fetch("/api/analyse/image/", {
+      method: "POST",
+      body: formData,
+    });
+
+    if (!analysisResponse.ok) {
+      throw new Error(`Image analysis failed (${analysisResponse.status})`);
+    }
+
+    const detectedItems = await analysisResponse.json();
+    console.log("Detected items:", detectedItems);
+  } catch (error) {
+    console.error(error);
+    alert("The image could not be analysed.");
+  } finally {
+    uploadButton.disabled = false;
+  }
+});
 allowButton.addEventListener("click", () => {
 
   navigator.mediaDevices
