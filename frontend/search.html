@@ -108,7 +108,7 @@
         document.getElementById("search_button1").addEventListener("click", async (e) => {
             let query = document.getElementById("search_query_input1").value;
 
-            let result = await (await fetch(`https://snackscout.club:8080/search/closest&item_name=${query}&latitude=33.416708&longitude=-111.931012`)).json();
+            let result = await (await fetch(`https://snackscout.club:/api/search/closest&item_name=${query}&latitude=33.416708&longitude=-111.931012`)).json();
             if (result.length > 0) {
 
                 alert("Redirecting to the closest machine's info page");
