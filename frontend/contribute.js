@@ -9,7 +9,6 @@ const video = document.getElementById("video");
 const canvas = document.getElementById("canvas");
 const photo = document.getElementById("photo");
 const startButton = document.getElementById("start-button");
-const allowButton = document.getElementById("permissions-button");
 const uploadButton = document.getElementById("upload-img-button");
 uploadButton.addEventListener("click", async () => {
   if (!photo.src || photo.src === window.location.href) {
@@ -34,7 +33,42 @@ uploadButton.addEventListener("click", async () => {
     }
 
     const detectedItems = await analysisResponse.json();
-    console.log("Detected items:", detectedItems);
+    const position = await new Promise((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(resolve, reject, {
+        enableHighAccuracy: true,
+        timeout: 10000,
+      });
+    });
+
+    const machineResponse = await fetch("/api/locations/", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        name: "New Vending Machine",
+        longitude: position.coords.longitude,
+        latitude: position.coords.latitude,
+        cash: false,
+        tap: false,
+        mng: false,
+        items: detectedItems.map((itemName) => ({
+          name: itemName,
+          price: 0,
+        })),
+      }),
+    });
+
+    if (!machineResponse.ok) {
+      throw new Error(`Machine creation failed (${machineResponse.status})`);
+    }
+
+    const machineId = await machineResponse.json();
+    if (!machineId) {
+      throw new Error("Machine creation returned no ID");
+    }
+
+    window.location.assign(
+      `machine-info.html?machine_id=${encodeURIComponent(machineId)}`,
+    );
   } catch (error) {
     console.error(error);
     alert("The image could not be analysed.");
@@ -42,18 +76,18 @@ uploadButton.addEventListener("click", async () => {
     uploadButton.disabled = false;
   }
 });
-allowButton.addEventListener("click", () => {
-
-  navigator.mediaDevices
-    .getUserMedia({ video: true, audio: false })
-    .then((stream) => {
-      alert("a");
-      video.srcObject = stream;
-      video.play();
-      alert("b");
-    })
-
-});
+async function startCamera() {
+  try {
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: true,
+      audio: false,
+    });
+    video.srcObject = stream;
+    await video.play();
+  } catch (error) {
+    console.error("Unable to access the camera:", error);
+  }
+}
 
 video.addEventListener("canplay", (ev) => {
   if (!streaming) {
@@ -66,6 +100,8 @@ video.addEventListener("canplay", (ev) => {
     streaming = true;
   }
 });
+
+startCamera();
 
 startButton.addEventListener("click", (ev) => {
   takePicture();
