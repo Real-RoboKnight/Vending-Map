@@ -12,14 +12,18 @@ const startButton = document.getElementById("start-button");
 const allowButton = document.getElementById("permissions-button");
 
 allowButton.addEventListener("click", () => {
+  alert("start");
   navigator.mediaDevices
     .getUserMedia({ video: true, audio: false })
     .then((stream) => {
+      alert("a");
       video.srcObject = stream;
       video.play();
+      alert("b");
     })
     .catch((err) => {
       console.error(`An error occurred: ${err}`);
+      alert("c");
     });
 });
 
