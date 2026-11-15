@@ -298,7 +298,7 @@
 
             newLabel1 = document.createElement("label");
             newLabel1.htmlFor = `item-${i}-price`;
-            newLabel1.innerText = `Price of item ${i}`;
+            newLabel1.innerText = `Price of item #${i}`;
             newCol1Div.appendChild(newLabel1);
 
             newInput2 = document.createElement("input");
@@ -312,6 +312,7 @@
             newDiv.appendChild(newCol2Div);
             machine_items.appendChild(newDiv);
 
+            numItems++;
             console.log("done adding row");
         }
         document.getElementById("add-new-items-button").addEventListener("click", addItemRow);
