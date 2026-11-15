@@ -1,6 +1,7 @@
+import io
 import base64
 from typing import Annotated
-
+from PIL import Image
 from bson import ObjectId
 from fastapi import FastAPI, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -208,7 +209,26 @@ async def analyse_image(image: UploadFile) -> list[str]:
         "required": ["items"],
     }
 
-    b64_image = base64.b64encode(await b64_image).decode("utf-8")  # Convert the image to base64 string
+    def minify_image_bytes(
+        image_bytes: bytes, quality: int = 50, output_format: str = "WEBP"
+        ) -> bytes:
+        # Load the raw bytes into a file-like stream
+        input_stream = io.BytesIO(image_bytes)
+        img = Image.open(input_stream)
+
+        # Convert RGBA/P to RGB if saving as JPEG (JPEG does not support transparency)
+        if output_format.upper() == "JPEG" and img.mode in ("RGBA", "P"):
+            img = img.convert("RGB")
+        img.thumbnail((1024, 1024))  # Resize to a max of 1024px while maintaining aspect ratio
+
+        # Save the compressed image to a new in-memory byte stream
+        output_stream = io.BytesIO()
+        img.save(output_stream, format=output_format, optimize=True, quality=quality)
+
+        # Return the minified bytes
+        return output_stream.getvalue()
+
+    b64_image = base64.b64encode(minify_image_bytes(await b64_image)).decode("utf-8")  # Convert the image to base64 string
     
     gemini_response = gemini.interactions.create(
         model="gemini-3.5-flash",

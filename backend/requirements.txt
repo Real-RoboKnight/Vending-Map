@@ -3,3 +3,4 @@ python-multipart
 pymongo
 dnspython
 google-genai
+pillow
