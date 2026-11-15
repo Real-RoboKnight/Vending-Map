@@ -334,7 +334,7 @@
                     }
                 );
             }
-            await fetch("/locations", method = "PUT", body = JSON.stringify(
+            await fetch("/locations", { method: "PUT", body: JSON.stringify(
 
                 {
                     "_id": machineID,
@@ -346,7 +346,7 @@
                     "mAndg": mAndg,
                     "items": items
                 }
-            ))
+            )})
         }
         document.getElementById("submit-changes-button").addEventListener("click", submitChanges);
         document.getElementById("form").addEventListener("click", (e)=>{
