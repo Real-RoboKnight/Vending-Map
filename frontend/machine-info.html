@@ -336,16 +336,7 @@
                     newItem
                 );
             }
-            console.log({
-                "_id": machineID,
-                "name": name,
-                "longitude": longitude,
-                "latititude": latitude,
-                "cash": cash,
-                "tap": tap,
-                "mng": mAndg,
-                "items": items
-            })
+            
             await fetch("http://45.63.89.239:8080/locations", {
                 method: "PUT", body: JSON.stringify(
 
@@ -356,7 +347,7 @@
                         "latititude": latitude,
                         "cash": cash,
                         "tap": tap,
-                        "mAndg": mAndg,
+                        "mng": mAndg,
                         "items": items
                     }
                 )
