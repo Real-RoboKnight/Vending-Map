@@ -252,3 +252,55 @@ async def analyse_image(image: UploadFile) -> list[str]:
     return [item for item in output if item in items_in_db]
 
 # Search
+@app.get("/search/cheapest/")
+async def search_cheapest(
+    item_name: str, longitude: float, latitude: float, count: int = 5
+) -> list[machine_location]:
+    """Search for the cheapest locations that have the given item. Will return a list of `count` machine_location objects sorted by price."""
+    locations = []
+    async for location in (
+        locations_collection.find(
+            {"items.name": item_name},
+            {
+                "items": 1,
+                "name": 1,
+                "longitude": 1,
+                "latitude": 1,
+                "cash": 1,
+                "tap": 1,
+                "mng": 1,
+            },
+        )
+        .sort("items.price", 1)
+        .limit(count)
+    ):
+        locations.append(machine_location.model_validate(location))
+    return locations
+
+
+@app.get("/search/closest/")
+async def search_closest(
+    item_name: str, longitude: float, latitude: float, count: int = 5
+) -> list[machine_location]:
+    """Search for the closest locations that have the given item. Will return a list of `count` machine_location objects ordered by distance."""
+    locations = []
+    async for location in locations_collection.find(
+        {"items.name": item_name},
+        {
+            "items": 1,
+            "name": 1,
+            "longitude": 1,
+            "latitude": 1,
+            "cash": 1,
+            "tap": 1,
+            "mng": 1,
+        },
+    ):
+        distance_squared = (location["longitude"] - longitude) ** 2 + (
+            location["latitude"] - latitude
+        ) ** 2
+        location["_distance_squared"] = distance_squared
+        locations.append(machine_location.model_validate(location))
+
+    locations.sort(key=lambda location: location.model_dump().get("_distance_squared", 0))
+    return locations[:count]
