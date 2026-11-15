@@ -4,3 +4,4 @@ __pycache__/
 *$py.class
 .venv/
 database_url.txt
+gemini_key.txt

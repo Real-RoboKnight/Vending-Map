@@ -20,3 +20,5 @@ services:
 secrets:
   db_password:
     file: ./database_url.txt
+  gemini:
+    file: ./gemini_key.txt
