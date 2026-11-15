@@ -174,7 +174,7 @@
 
         let data;
         if (machine_id) {
-            data = await (await fetch(`http://45.63.89.239:8080/locations/${machine_id}`)).json();
+            data = await (await fetch(`/api/locations/${machine_id}`)).json();
 
             document.getElementById("_id").value = data._id;
             document.getElementById("name").value = data.name;
@@ -336,7 +336,7 @@
                 );
             }
             
-            await fetch("http://45.63.89.239:8080/locations", {
+            await fetch("/api/locations", {
                 method: "PUT", headers: new Headers({"content-type": "application/json"}),
                 body: JSON.stringify(
 

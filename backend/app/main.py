@@ -16,6 +16,7 @@ origins = [
     "http://45.63.89.239",
     "http://45.63.89.239:8080",
     "http://snackscout.club",  # Production domain
+    "https://snackscout.club",
 ]
 
 # 2. Add the middleware to your FastAPI instance

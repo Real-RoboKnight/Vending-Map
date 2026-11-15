@@ -105,7 +105,7 @@
 
 
         //fetch data from backend
-        let data = await (await fetch("http://45.63.89.239:8080/locations/?min_longitude=-200&min_latitude=-200&max_longitude=200&max_latitude=200")).json();
+        let data = await (await fetch("/api/locations/?min_longitude=-200&min_latitude=-200&max_longitude=200&max_latitude=200")).json();
         
         //hardcoded test data
         //let data = JSON.parse(`[{"_id": "abc", "name": "NAME", "longitude": -111.932, "latitude": 33.419, "cash": true, "tap": false, "mng": false}]`)
