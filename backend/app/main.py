@@ -63,7 +63,7 @@ class machine_location(BaseModel):
         arbitrary_types_allowed=True,
         json_schema_extra={
             "example": {
-                "_id": "6af8ec36812ac87c4f04e0ec",
+                "id": "6af8ec36812ac87c4f04e0ec",
                 "name": "Example Location",
                 "longitude": -111.9194,
                 "latitude": 33.4749,
@@ -125,7 +125,7 @@ async def update_location(location: machine_location) -> bool:
 
     updated_location = location.model_dump(by_alias=True, exclude={"id"})
     result = await locations_collection.find_one_and_update(
-        {"_id": ObjectId(location.id)},
+        {"id": ObjectId(location.id)},
         {"$set": updated_location},
         return_document=ReturnDocument.AFTER,
     )
@@ -154,11 +154,11 @@ async def autocomplete_search(query: str) -> list[str]:
                 }
             },
             {"$unwind": "$items"},
-            {"$group": {"_id": "$items.name"}},
-            {"$sort": {"_id": 1}},
+            {"$group": {"id": "$items.name"}},
+            {"$sort": {"id": 1}},
             {"$limit": 5},
         ]):
-            items.append(item["_id"])
+            items.append(item["id"])
     except Exception:
         # Atlas Search is optional while the search index is being configured.
         pass
