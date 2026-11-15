@@ -329,7 +329,7 @@
             for (let i = 0; i < numItems; i++) {
                 let newItem = {
                     "name": document.getElementById(`item-${i}-name`).value,
-                    "price": Number(document.getElementById(`item-${i}-price`)).value
+                    "price": Number(document.getElementById(`item-${i}-price`).value)
                 };
                 console.log(newItem);
                 items.push(
