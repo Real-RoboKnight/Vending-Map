@@ -234,7 +234,8 @@ async def analyse_image(image: UploadFile) -> list[str]:
     gemini_response = gemini.interactions.create(
         model="gemini-3.5-flash",
         input=
-        [{"type": "text", "text": f"Analyse the following image and return a list of items detected in it. Return all the items in a JSON array under the key 'items'. Only return items that are in the following list: {items_in_db}."},
+        [{"type": "text", "text": 
+          f"Analyse the following image and return a list of items detected in it. Return all the items in a JSON array under the key 'items'. Only return items that are in the following list: {items_in_db}."},
          {"type": "image", "data": b64_image, "mime_type": "image/jpeg"}],
         response_format={
             "type": "text",

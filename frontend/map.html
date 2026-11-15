@@ -110,11 +110,11 @@
         let data = await (await fetch("http://45.63.89.239:8080/locations/?min_longitude=-200&min_latitude=-200&max_longitude=200&max_latitude=200")).json();
         
         //hardcoded test data
-        //let data = JSON.parse(`[{"_id": "abc", "name": "NAME", "longitude": -111.932, "latitude": 33.419, "cash": true, "tap": false, "other_payment_methods": ["M&G"]}]`)
+        //let data = JSON.parse(`[{"_id": "abc", "name": "NAME", "longitude": -111.932, "latitude": 33.419, "cash": true, "tap": false, "mng": false}]`)
         
         data.forEach((item) => {
             let popUpText = "";
-            new Marker([item.latitude, item.longitude]).addTo(map).bindPopup(`<h3>${item.name}</h3><p>Cash: ${item.cash}</p><p>Tap: ${item.tap}</p><p>Other Payment: ${item.other_payment_methods}</p><p><a href="/machine-info.html?machine_id=${item._id}">More info</a></p><p><a href="geo:${item.latitude},${item.longitude}">Open in Default Map App</a></p>`);
+            new Marker([item.latitude, item.longitude]).addTo(map).bindPopup(`<h3>${item.name}</h3><p>Cash: ${item.cash}</p><p>Tap: ${item.tap}</p><p>M&G: ${item.mng}</p><p><a href="/machine-info.html?machine_id=${item._id}">More info</a></p><p><a href="geo:${item.latitude},${item.longitude}">Open in Default Map App</a></p>`);
         
         })
         
