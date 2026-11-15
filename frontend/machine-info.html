@@ -319,8 +319,8 @@
         async function submitChanges() {
             let machineID = document.getElementById("_id").value;
             let name = document.getElementById("name").value;
-            let latitude = document.getElementById("latitude").value;
-            let longitude = document.getElementById("longitude").value;
+            let latitude = Number(document.getElementById("latitude").value);
+            let longitude = Number( document.getElementById("longitude").value);
             let cash = Boolean(document.getElementById("cash").value);
             let tap = Boolean(document.getElementById("tap").value);
             let mAndg = Boolean(document.getElementById("mandg").value);
@@ -343,7 +343,7 @@
                 "latititude": latitude,
                 "cash": cash,
                 "tap": tap,
-                "mAndg": mAndg,
+                "mng": mAndg,
                 "items": items
             })
             await fetch("http://45.63.89.239:8080/locations", {
