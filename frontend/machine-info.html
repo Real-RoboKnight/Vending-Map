@@ -77,52 +77,104 @@
         </div>
     </nav>
 
+    <script>
+        async function submitChanges() {
+            let machineID = Number(document.getElementByID("_id").value);
+            let name = document.getElementByID("name").value;
+            let latitude = document.getElementByID("latitude").value;
+            let longitude = document.getElementByID("longitude").value;
+            let cash = document.getElementByID("cash").value;
+            let tap = document.getElementByID("tap").value;
+            let mAndg = document.getElementByID("mandg").value;
 
+            let items = {}
+            for (let i = 0; i<numItems; i++) {
+                items.push(
+                    {
+                        "name": document.getElementById(`item-${i}-name`).value,
+                        "price": Number(document.getElementById(`item-${i}-price`)).value
+                    }
+                );
+            }
+            await fetch("/locations", method="PUT", body=JSON.stringify(
+
+            {
+                "_id": machineID,
+                "name": name,
+                "longitude": longitude,
+                "latititude": latitude,
+                "cash": cash,
+                "tap": tap,
+                "mAndg": mAndg,
+                "items": items
+            }
+            ))
+        }
+    </script>
     <div class="lg:container container-fluid text-center">
-        <form></form>
-        <div class="row">
-            <div class="col">
-                <h1>Vending Map</h1>
+        <form onSubmit="submitChanges()">
+            <div class="row">
+                <div class="col">
+                    <h1>Vending Map</h1>
+                </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <label for="_id">Machine ID</h3>
+            <div class="row">
+                <div class="col">
+                    <label for="_id">Machine ID</h3>
+                </div>
+                <div class="col">
+                    <input type="text" id="_id" name="_id">
+                </div>
             </div>
-            <div class="col">Col B</div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <h3>Machine Name</h3>
+            <div class="row">
+                <div class="col">
+                    <label for="name">Name</h3>
+                </div>
+                <div class="col">
+                    <input type="text" id="name" name="name">
+                </div>
             </div>
-            <div class="col">Col B</div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <h3>Cash payment?</h3>
+            <div class="row">
+                <div class="col">
+                    <label for="latitude">Latitude</h3>
+                </div>
+                <div class="col">
+                    <input type="text" id="latitude" name="latitude">
+                </div>
             </div>
-            <div class="col">Col B</div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <h3>Tap to pay?</h3>
+            <div class="row">
+                <div class="col">
+                    <label for="longitude">Longitude</h3>
+                </div>
+                <div class="col">
+                    <input type="text" id="longitude" name="longitude">
+                </div>
             </div>
-            <div class="col">Col B</div>
-        </div>
-        <div class="row">
-            <div class="col">
-                <h3>Other payment methods?</h3>
+
+            <div class="row">
+                <div class="col">
+                    <label for="cash">Cash?</h3>
+                </div>
+                <div class="col">
+                    <input type="text" id="cash" name="cash">
+                </div>
             </div>
-            <div class="col">Col B</div>
-        </div>
-        <div class="row">
-            <div class="col">Col A</div>
-            <div class="col">Col B</div>
-        </div>
-        <div class="row">
-            <div class="col">Col A</div>
-            <div class="col">Col B</div>
-        </div>
+            <div class="row">
+                <div class="col">
+                    <label for="tap">Tap to Pay?</h3>
+                </div>
+                <div class="col">
+                    <input type="text" id="tap" name="tap">
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <input type="submit"></input>
+                </div>
+            </div>
+
+
         </form>
     </div>
 
@@ -137,6 +189,11 @@
         if (machine_id) {
             let data = await JSON.parse(await fetch("/"));
 
+            document.getElementById("_id").value = data._id;
+            
+
+
+            numItems = 999
 
 
 

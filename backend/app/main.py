@@ -42,8 +42,8 @@ class machine_location(BaseModel):
             "example": {
                 "_id": "6af8ec36812ac87c4f04e0ec",
                 "name": "Example Location",
-                "longitude": -122.4194,
-                "latitude": 37.7749,
+                "longitude": -111.9194,
+                "latitude": 33.4749,
                 "cash": True,
                 "tap": False,
                 "mng": False,
