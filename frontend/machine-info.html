@@ -150,7 +150,7 @@
 
                 </div>
                 <div class="row">
-                    <div class="col"><button onclick="addItemRow()"></button></div>
+                    <div class="col"><button onclick="addItemRow()">Add new item</button></div>
                 </div>
             </div>
 
@@ -259,6 +259,7 @@
             radius: 500
         }).addTo(map);*/
         async function addItemRow() {
+            console.log("adding row");
 
             let i = data.items.length;
 
@@ -309,6 +310,8 @@
             newDiv.appendChild(newCol1Div);
             newDiv.appendChild(newCol2Div);
             machine_items.appendChild(newDiv);
+
+            console.log("done adding row");
         }
         async function submitChanges() {
             let machineID = Number(document.getElementByID("_id").value);
