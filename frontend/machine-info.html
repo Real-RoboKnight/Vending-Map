@@ -338,7 +338,8 @@
             }
             
             await fetch("http://45.63.89.239:8080/locations", {
-                method: "PUT", body: 
+                method: "PUT", headers: new Headers({"content-type": "application/json"}),
+                body: JSON.stringify(
 
                     {
                         "_id": machineID,
@@ -350,7 +351,7 @@
                         "mng": mAndg,
                         "items": items
                     }
-                
+                )
             })
         }
         document.getElementById("submit-changes-button").addEventListener("click", submitChanges);
