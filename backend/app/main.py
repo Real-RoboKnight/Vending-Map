@@ -98,7 +98,7 @@ async def get_locations(
 @app.get("/locations/{id}")
 async def get_location(id: str) -> machine_location:
     """Get a location by its ID."""
-    location = await locations_collection.find_one({"_id": ObjectId(id)})
+    location = await locations_collection.find_one({"id": ObjectId(id)})
     if location is None:
         raise HTTPException(status_code=404, detail="Location not found")
     return machine_location.model_validate(location)
