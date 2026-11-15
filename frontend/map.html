@@ -109,15 +109,20 @@
 
 
         //fetch data from backend
-        let data = await fetch()
-        new Marker([33.419, -111.932]).addTo(map)
-        new Marker([33.41, -111.93]).addTo(map).bindPopup("Hello").openPopup();
-        const circle = new Circle([33.419, -111.932], {
+        //let data = await JSON.parse(await fetch("/locations?min_longitude=-200&min_latitude=-200&max_longitude=200&max_latitude=200"));
+        let data = JSON.parse(`[{"_id": "abc", "name": "NAME", "longitude": -111.932, "latitude": 33.419, "cash": true, "tap": false, "other_payment_methods": ["M&G"]}]`)
+        data.forEach((item) => {
+            let popUpText = "";
+            new Marker([item.latitude, item.longitude]).addTo(map).bindPopup(`<h3>${item.name}</h3><p>Cash: ${item.cash}</p><p>Tap: ${item.tap}</p><p>Other Payment: ${item.other_payment_methods}</p><a href="/machine-info.html?machine_id=${item._id}">More info</a>`);
+        
+        })
+        
+        /*const circle = new Circle([33.419, -111.932], {
             color: 'red',
             fillColor: '#f03',
             fillOpacity: 0.5,
             radius: 500
-        }).addTo(map);
+        }).addTo(map);*/
 
     </script>
 
