@@ -10,9 +10,13 @@ const canvas = document.getElementById("canvas");
 const photo = document.getElementById("photo");
 const startButton = document.getElementById("start-button");
 const allowButton = document.getElementById("permissions-button");
-
+const uploadButton = document.getElementById("upload-img-button");
+uploadButton.addEventListener("click", ()=> {
+  console.log(photo.src);
+  
+})
 allowButton.addEventListener("click", () => {
-  alert("start");
+
   navigator.mediaDevices
     .getUserMedia({ video: true, audio: false })
     .then((stream) => {
