@@ -21,10 +21,7 @@ allowButton.addEventListener("click", () => {
       video.play();
       alert("b");
     })
-    .catch((err) => {
-      console.error(`An error occurred: ${err}`);
-      alert("c");
-    });
+    
 });
 
 video.addEventListener("canplay", (ev) => {
