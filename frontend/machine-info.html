@@ -142,16 +142,21 @@
                 </div>
             </div>
 
-            <div class="row">
-                <div class="col">
-                    <input type="submit"></input>
-                </div>
-            </div>
+
 
             <div id="machine_items" class="row">
                 <div class="container col">
 
 
+                </div>
+                <div class="row">
+                    <div class="col"><button onclick="addItemRow()" </button></button></div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col">
+                    <input type="submit"></input>
                 </div>
             </div>
 
@@ -169,8 +174,9 @@
 
         let machine_id = query_params.get("machine_id");
 
+        let data;
         if (machine_id) {
-            let data = await (await fetch(`http://45.63.89.239:8080/locations/${machine_id}`)).json();
+            data = await (await fetch(`http://45.63.89.239:8080/locations/${machine_id}`)).json();
 
             document.getElementById("_id").value = data._id;
             document.getElementById("name").value = data.name;
@@ -252,7 +258,58 @@
             fillOpacity: 0.5,
             radius: 500
         }).addTo(map);*/
+        async function addItemRow() {
 
+            let i = data.items.length;
+
+            //create item name input
+            let newDiv = document.createElement("div");
+            newDiv.classList.add("row");
+            let newCol1Div = document.createElement("div");
+            newCol1Div.classList.add("col");
+            let newCol2Div = document.createElement("div");
+            newCol2Div.classList.add("col");
+
+            let newLabel1 = document.createElement("label");
+            newLabel1.htmlFor = `item-${i}-name`;
+            newLabel1.innerText = `Name of item #${i}`;
+            newCol1Div.appendChild(newLabel1);
+
+            let newInput2 = document.createElement("input");
+            newInput2.type = "text";
+            newInput2.id = `item-${i}-name`;
+            newInput2.name = `item-${i}-name`;
+
+            newCol2Div.append(newInput2);
+
+            newDiv.appendChild(newCol1Div);
+            newDiv.appendChild(newCol2Div);
+            machine_items.appendChild(newDiv);
+
+            //now item price input
+            newDiv = document.createElement("div");
+            newDiv.classList.add("row");
+            newCol1Div = document.createElement("div");
+            newCol1Div.classList.add("col");
+            newCol2Div = document.createElement("div");
+            newCol2Div.classList.add("col");
+
+            newLabel1 = document.createElement("label");
+            newLabel1.htmlFor = `item-${i}-price`;
+            newLabel1.innerText = `Price of item ${i}`;
+            newCol1Div.appendChild(newLabel1);
+
+            newInput2 = document.createElement("input");
+            newInput2.type = "text";
+            newInput2.id = `item-${i}-price`;
+            newInput2.name = `item-${i}-price`;
+
+            newCol2Div.append(newInput2);
+
+            newDiv.appendChild(newCol1Div);
+            newDiv.appendChild(newCol2Div);
+            machine_items.appendChild(newDiv);
+        }
         async function submitChanges() {
             let machineID = Number(document.getElementByID("_id").value);
             let name = document.getElementByID("name").value;
