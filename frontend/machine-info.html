@@ -150,13 +150,13 @@
 
                 </div>
                 <div class="row">
-                    <div class="col"><button onclick="addItemRow()">Add new item</button></div>
+                    <div class="col"><button id="add-new-items-button">Add new item</button></div>
                 </div>
             </div>
 
             <div class="row">
                 <div class="col">
-                    <input type="submit"></input>
+                    <input type="submit" id="submit-changes-button"></input>
                 </div>
             </div>
 
@@ -313,6 +313,8 @@
 
             console.log("done adding row");
         }
+        document.getElementById("add-new-items-button").addEventListener("click", addItemRow);
+
         async function submitChanges() {
             let machineID = Number(document.getElementByID("_id").value);
             let name = document.getElementByID("name").value;
@@ -345,6 +347,7 @@
                 }
             ))
         }
+        document.getElementById("submit-changes-button").addEventListener("click", submitChanges);
     </script>
 
     <script type="module" src="https://cdn.jsdelivr.net/npm/bootstrap@6.0.0-alpha.1/dist/js/bootstrap.bundle.min.js"
