@@ -15,6 +15,7 @@ services:
     container_name: backend
     secrets:
       - db_password
+      - gemini
     restart: unless-stopped
       
 secrets:
